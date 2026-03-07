@@ -13,10 +13,24 @@ function AttendanceManagement({ onDataChange, refreshTrigger }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Fetch employees and attendance on component mount and when refreshTrigger changes
   useEffect(() => {
     fetchEmployees();
     fetchAllAttendance();
   }, [refreshTrigger]);
+
+  // Auto-refresh attendance data every 30 seconds to ensure database sync
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (selectedEmployee) {
+        fetchEmployeeAttendance(selectedEmployee.id);
+      } else {
+        fetchAllAttendance();
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [selectedEmployee]);
 
   const fetchEmployees = async () => {
     try {
@@ -81,10 +95,11 @@ function AttendanceManagement({ onDataChange, refreshTrigger }) {
       const response = await axios.post(`${API_BASE_URL}/attendance`, formData);
       if (response.data.success) {
         setSuccessMessage('Attendance marked successfully!');
+        // Immediately fetch fresh data from database
         if (selectedEmployee) {
-          fetchEmployeeAttendance(selectedEmployee.id);
+          await fetchEmployeeAttendance(selectedEmployee.id);
         } else {
-          fetchAllAttendance();
+          await fetchAllAttendance();
         }
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);

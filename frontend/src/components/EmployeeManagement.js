@@ -12,9 +12,19 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Fetch employees on component mount and when refreshTrigger changes
   useEffect(() => {
     fetchEmployees();
   }, [refreshTrigger]);
+
+  // Auto-refresh employee data every 30 seconds to ensure database sync
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchEmployees();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -40,7 +50,8 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       if (response.data.success) {
         setSuccessMessage('Employee added successfully!');
         setShowAddForm(false);
-        fetchEmployees();
+        // Immediately fetch fresh data from database
+        await fetchEmployees();
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
@@ -62,7 +73,8 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       const response = await axios.delete(`${API_BASE_URL}/employees/${employeeId}`);
       if (response.data.success) {
         setSuccessMessage('Employee deleted successfully!');
-        fetchEmployees();
+        // Immediately fetch fresh data from database
+        await fetchEmployees();
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
