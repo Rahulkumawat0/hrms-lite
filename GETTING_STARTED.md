@@ -1,8 +1,18 @@
 # HRMS Lite - Quick Start Guide
 
-Get HRMS Lite running locally in minutes.
+## 🌐 Try the Live Application
 
-## 🚀 Quick Start (5 minutes)
+The application is already deployed and live in production:
+
+**Frontend**: [https://hrms-lite-nine-sage.vercel.app/](https://hrms-lite-nine-sage.vercel.app/) - Ready to use immediately!
+
+**Backend API**: [https://hrms-lite-qan7.onrender.com/api](https://hrms-lite-qan7.onrender.com/api) - Test the API endpoints
+
+---
+
+## 🚀 Run Locally (5 minutes)
+
+Want to run the application on your machine? Follow these steps:
 
 ### Prerequisites
 
@@ -13,7 +23,7 @@ Get HRMS Lite running locally in minutes.
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/hrms-lite.git
+git clone https://github.com/Rahulkumawat0/hrms-lite.git
 cd hrms-lite
 ```
 

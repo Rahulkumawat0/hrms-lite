@@ -1,8 +1,14 @@
-# 🎉 HRMS Lite - Complete & Ready for Deployment
+# 🎉 HRMS Lite - Complete & Live in Production
 
-## Your Application is Ready!
+## ✅ Application is Live!
 
-Your HRMS Lite application has been fully developed and is ready for production deployment. Everything is built, tested, and documented.
+Your HRMS Lite application has been successfully deployed to production. Access it live now:
+
+🌐 **Frontend**: [https://hrms-lite-nine-sage.vercel.app/](https://hrms-lite-nine-sage.vercel.app/)
+
+🔌 **Backend API**: [https://hrms-lite-qan7.onrender.com/api](https://hrms-lite-qan7.onrender.com/api)
+
+📦 **GitHub**: [https://github.com/Rahulkumawat0/hrms-lite](https://github.com/Rahulkumawat0/hrms-lite)
 
 ---
 

@@ -1,5 +1,13 @@
 # HRMS Lite - Complete File Manifest
 
+## 🌐 Live Application Status
+
+✅ **Frontend**: https://hrms-lite-nine-sage.vercel.app/
+✅ **Backend API**: https://hrms-lite-qan7.onrender.com/api
+✅ **GitHub Repository**: https://github.com/Rahulkumawat0/hrms-lite
+
+---
+
 ## 📋 Complete List of Files Created
 
 This document lists every file created for the HRMS Lite application.

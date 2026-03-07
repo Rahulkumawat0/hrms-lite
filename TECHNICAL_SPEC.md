@@ -1,8 +1,16 @@
 # HRMS Lite - Technical Specification
 
+## 🌐 Live Application
+
+**Frontend**: https://hrms-lite-nine-sage.vercel.app/
+**Backend API**: https://hrms-lite-qan7.onrender.com/api
+**GitHub Repository**: https://github.com/Rahulkumawat0/hrms-lite
+
+---
+
 ## System Overview
 
-HRMS Lite is a full-stack web application for managing employee records and attendance tracking. Built with Python Flask backend and React frontend, it provides a modern, responsive interface for HR operations.
+HRMS Lite is a full-stack web application for managing employee records and attendance tracking. The application is built with Python Flask backend and React frontend, deployed to production and fully operational.
 
 ---
 

@@ -1,12 +1,18 @@
 # HRMS Lite - Deployment Guide
 
-Complete guide for deploying HRMS Lite to production.
+## ✅ Deployment Status: LIVE IN PRODUCTION
 
-## Prerequisites
+**Frontend**: https://hrms-lite-nine-sage.vercel.app/
+**Backend API**: https://hrms-lite-qan7.onrender.com/api
+**GitHub**: https://github.com/Rahulkumawat0/hrms-lite
 
-- GitHub Account
-- Render Account (for backend) or similar cloud service
-- Vercel or Netlify Account (for frontend)
+HRMS Lite is fully deployed and running in production. This guide documents the deployment process.
+
+## Prerequisites (Already Completed)
+
+- ✅ GitHub Account
+- ✅ Render Account (backend deployed)
+- ✅ Vercel Account (frontend deployed)
 
 ## Part 1: GitHub Repository Setup
 

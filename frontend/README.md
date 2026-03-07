@@ -2,6 +2,12 @@
 
 A modern, responsive React frontend for the HRMS Lite (Human Resource Management System).
 
+## 🌐 Live Application
+
+**Production URL**: https://hrms-lite-nine-sage.vercel.app/
+
+**Fully functional and connected to production backend API**
+
 ## Features
 
 - **Employee Management**: Add, view, and delete employees

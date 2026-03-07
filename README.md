@@ -2,6 +2,14 @@
 
 A modern, full-stack web application for managing employee records and attendance tracking.
 
+## � Live Application
+
+**Frontend**: [https://hrms-lite-nine-sage.vercel.app/](https://hrms-lite-nine-sage.vercel.app/)
+
+**Backend API**: [https://hrms-lite-qan7.onrender.com/api](https://hrms-lite-qan7.onrender.com/api)
+
+**GitHub Repository**: [https://github.com/Rahulkumawat0/hrms-lite](https://github.com/Rahulkumawat0/hrms-lite)
+
 ## 📋 Overview
 
 HRMS Lite is a comprehensive HR management solution that allows administrators to:
@@ -11,8 +19,9 @@ HRMS Lite is a comprehensive HR management solution that allows administrators t
 Built with:
 - **Backend**: Python Flask with SQLAlchemy ORM
 - **Frontend**: React 18 with Bootstrap 5
-- **Database**: SQLite
+- **Database**: SQLite (development) / Production-ready
 - **API**: RESTful API with proper validation and error handling
+- **Deployment**: Render (Backend), Vercel (Frontend)
 
 ## 🎯 Features
 

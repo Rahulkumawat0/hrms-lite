@@ -2,6 +2,12 @@
 
 A RESTful API for Human Resource Management System built with Flask.
 
+## 🌐 Live API
+
+**Production URL**: https://hrms-lite-qan7.onrender.com/api
+
+**Test the API**: https://hrms-lite-qan7.onrender.com/api/health
+
 ## Features
 
 - **Employee Management**: Add, view, and delete employees
