@@ -171,10 +171,10 @@ def create_app():
                         'message': 'Employee not found'
                     }), 404
                 
-                records = Attendance.query.filter_by(employee_id=employee_id).all()
+                records = Attendance.query.filter_by(employee_id=employee_id).order_by(Attendance.date.desc()).all()
             else:
-                # Get all attendance records
-                records = Attendance.query.all()
+                # Get all attendance records sorted by date (newest first)
+                records = Attendance.query.order_by(Attendance.date.desc()).all()
             
             return jsonify({
                 'success': True,
@@ -296,7 +296,7 @@ def create_app():
                     'message': 'Employee not found'
                 }), 404
             
-            records = Attendance.query.filter_by(employee_id=emp_id).all()
+            records = Attendance.query.filter_by(employee_id=emp_id).order_by(Attendance.date.desc()).all()
             return jsonify({
                 'success': True,
                 'data': {

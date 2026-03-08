@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function AttendanceForm({ employees, selectedEmployee, onSubmit, onEmployeeSelect }) {
   const [formData, setFormData] = useState({
@@ -9,6 +9,14 @@ function AttendanceForm({ employees, selectedEmployee, onSubmit, onEmployeeSelec
 
   const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Update form when selectedEmployee changes
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      employee_id: selectedEmployee?.id || ''
+    }));
+  }, [selectedEmployee]);
 
   const validateForm = () => {
     const errors = {};
@@ -32,7 +40,7 @@ function AttendanceForm({ employees, selectedEmployee, onSubmit, onEmployeeSelec
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'employee_id' ? parseInt(value) || '' : value
+      [name]: name === 'employee_id' ? (value ? parseInt(value) : '') : value
     }));
     // Clear error for this field
     if (validationErrors[name]) {
@@ -77,7 +85,7 @@ function AttendanceForm({ employees, selectedEmployee, onSubmit, onEmployeeSelec
         date: formData.date,
         status: formData.status
       });
-      // Reset form
+      // Reset form but keep selected employee
       setFormData({
         employee_id: selectedEmployee?.id || '',
         date: new Date().toISOString().split('T')[0],

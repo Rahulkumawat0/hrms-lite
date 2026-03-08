@@ -54,7 +54,9 @@ function AttendanceList({ records, loading, employees, selectedEmployee }) {
 
   // Sort records by date (newest first)
   const sortedRecords = [...records].sort((a, b) => {
-    return new Date(b.date) - new Date(a.date);
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB - dateA;
   });
 
   return (

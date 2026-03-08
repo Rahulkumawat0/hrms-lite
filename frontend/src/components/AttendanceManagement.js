@@ -96,11 +96,13 @@ function AttendanceManagement({ onDataChange, refreshTrigger }) {
       if (response.data.success) {
         setSuccessMessage('Attendance marked successfully!');
         // Immediately fetch fresh data from database
-        if (selectedEmployee) {
-          await fetchEmployeeAttendance(selectedEmployee.id);
-        } else {
-          await fetchAllAttendance();
-        }
+        setTimeout(async () => {
+          if (selectedEmployee) {
+            await fetchEmployeeAttendance(selectedEmployee.id);
+          } else {
+            await fetchAllAttendance();
+          }
+        }, 100);
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
