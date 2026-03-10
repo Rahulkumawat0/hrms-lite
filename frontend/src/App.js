@@ -51,11 +51,7 @@ function App() {
                 >
                   <i className="fas fa-calendar-check"></i> Attendance
                 </a>
-              </li>analytics' && (
-            <Analytics />
-          )}
-
-          {activeTab === '
+              </li>
             </ul>
           </div>
         </div>
@@ -64,6 +60,10 @@ function App() {
       {/* Main Content */}
       <div className="main-content">
         <div className="container-lg py-5">
+          {activeTab === 'analytics' && (
+            <Analytics />
+          )}
+
           {activeTab === 'employees' && (
             <EmployeeManagement onDataChange={handleDataChange} refreshTrigger={refreshTrigger} />
           )}
