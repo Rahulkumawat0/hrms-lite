@@ -313,6 +313,147 @@ def create_app():
                 'error': str(e)
             }), 500
     
+    # ==================== ANALYTICS ENDPOINTS ====================
+    
+    @app.route('/api/analytics/summary', methods=['GET'])
+    def get_analytics_summary():
+        """Get analytics summary with key metrics"""
+        try:
+            # Total employees
+            total_employees = Employee.query.count()
+            
+            # Get employees by department
+            departments_data = db.session.query(
+                Employee.department,
+                db.func.count(Employee.id).label('count')
+            ).group_by(Employee.department).all()
+            
+            departments = {dept: count for dept, count in departments_data}
+            
+            # Attendance statistics
+            total_attendance = Attendance.query.count()
+            present_count = Attendance.query.filter_by(status='Present').count()
+            absent_count = Attendance.query.filter_by(status='Absent').count()
+            
+            # Calculate attendance rate
+            if total_attendance > 0:
+                attendance_rate = (present_count / total_attendance) * 100
+            else:
+                attendance_rate = 0
+            
+            # Recent attendance (last 7 days)
+            from datetime import datetime, timedelta
+            seven_days_ago = date.today() - timedelta(days=7)
+            recent_attendance = Attendance.query.filter(
+                Attendance.date >= seven_days_ago
+            ).count()
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'total_employees': total_employees,
+                    'total_attendance_records': total_attendance,
+                    'present_count': present_count,
+                    'absent_count': absent_count,
+                    'attendance_rate': round(attendance_rate, 2),
+                    'recent_attendance_7days': recent_attendance,
+                    'departments': departments
+                }
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error retrieving analytics',
+                'error': str(e)
+            }), 500
+    
+    @app.route('/api/analytics/attendance-trend', methods=['GET'])
+    def get_attendance_trend():
+        """Get attendance trend for the last 30 days"""
+        try:
+            from datetime import datetime, timedelta
+            
+            # Get data for last 30 days
+            thirty_days_ago = date.today() - timedelta(days=30)
+            
+            # Group by date and status
+            trend_data = db.session.query(
+                Attendance.date,
+                Attendance.status,
+                db.func.count(Attendance.id).label('count')
+            ).filter(
+                Attendance.date >= thirty_days_ago
+            ).group_by(Attendance.date, Attendance.status).order_by(Attendance.date).all()
+            
+            # Format response
+            dates = {}
+            for record in trend_data:
+                date_str = record[0].isoformat()
+                status = record[1]
+                count = record[2]
+                
+                if date_str not in dates:
+                    dates[date_str] = {'date': date_str, 'Present': 0, 'Absent': 0}
+                
+                dates[date_str][status] = count
+            
+            return jsonify({
+                'success': True,
+                'data': list(dates.values())
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error retrieving attendance trend',
+                'error': str(e)
+            }), 500
+    
+    @app.route('/api/analytics/employee-attendance/<int:emp_id>', methods=['GET'])
+    def get_employee_analytics(emp_id):
+        """Get attendance analytics for a specific employee"""
+        try:
+            employee = Employee.query.get(emp_id)
+            if not employee:
+                return jsonify({
+                    'success': False,
+                    'message': 'Employee not found'
+                }), 404
+            
+            # Get all attendance records for employee
+            records = Attendance.query.filter_by(employee_id=emp_id).all()
+            
+            total = len(records)
+            present = sum(1 for r in records if r.status == 'Present')
+            absent = sum(1 for r in records if r.status == 'Absent')
+            
+            attendance_rate = (present / total * 100) if total > 0 else 0
+            
+            # Last 30 days
+            from datetime import timedelta
+            thirty_days_ago = date.today() - timedelta(days=30)
+            recent_records = [r for r in records if r.date >= thirty_days_ago]
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'employee': employee.to_dict(),
+                    'total_records': total,
+                    'present_count': present,
+                    'absent_count': absent,
+                    'attendance_rate': round(attendance_rate, 2),
+                    'last_30_days_records': len(recent_records)
+                }
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error retrieving employee analytics',
+                'error': str(e)
+            }), 500
+    
     # ==================== HEALTH CHECK ====================
     
     @app.route('/api/health', methods=['GET'])

@@ -437,3 +437,206 @@ body {
   color: var(--dark-text);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
+
+/* ==================== Analytics Styles ==================== */
+
+.analytics-container {
+  width: 100%;
+}
+
+/* Analytics Cards */
+.analytics-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.analytics-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.analytics-card-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.analytics-card-header i {
+  font-size: 1.5rem;
+}
+
+.analytics-card-header h6 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Color variants for cards */
+.card-primary .analytics-card-header {
+  color: var(--primary-color);
+}
+
+.card-info .analytics-card-header {
+  color: var(--info-color);
+}
+
+.card-success .analytics-card-header {
+  color: var(--success-color);
+}
+
+.card-danger .analytics-card-header {
+  color: var(--danger-color);
+}
+
+.analytics-card-value {
+  padding: 0 1.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--dark-text);
+}
+
+.analytics-card-footer {
+  padding: 1rem 1.5rem;
+  background: var(--light-bg);
+  margin-top: auto;
+  border-radius: 0;
+}
+
+.analytics-card-footer small {
+  color: var(--light-text);
+  font-size: 0.85rem;
+}
+
+/* Metric Value */
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 1rem 0;
+}
+
+/* Department Cards */
+.department-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ecf1f7 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.department-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.dept-name {
+  font-weight: 600;
+  color: var(--dark-text);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.dept-count {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.dept-percentage {
+  font-size: 0.85rem;
+  color: var(--light-text);
+}
+
+/* Progress Bar */
+.progress {
+  background: var(--light-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--success-color) 0%, #229954 100%);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.4s ease;
+}
+
+/* Table Enhancements */
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ecf1f7 100%);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive Analytics */
+@media (max-width: 768px) {
+  .analytics-card-value {
+    font-size: 1.75rem;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .dept-count {
+    font-size: 1.25rem;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .analytics-card {
+    margin-bottom: 1rem;
+  }
+
+  .analytics-card-value {
+    font-size: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .analytics-card-header {
+    padding: 1rem;
+  }
+
+  .analytics-card-footer {
+    padding: 0.75rem 1rem;
+  }
+
+  .metric-value {
+    font-size: 1.25rem;
+  }
+
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .department-card {
+    padding: 1rem;
+  }
+}

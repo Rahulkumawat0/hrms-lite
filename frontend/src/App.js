@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import './styles/App.css';
 import EmployeeManagement from './components/EmployeeManagement';
 import AttendanceManagement from './components/AttendanceManagement';
+import Analytics from './components/Analytics';
 
 function App() {
   const [activeTab, setActiveTab] = useState('employees');
@@ -26,6 +27,15 @@ function App() {
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <a 
+                  className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`}
+                  href="#analytics"
+                  onClick={() => setActiveTab('analytics')}
+                >
+                  <i className="fas fa-chart-bar"></i> Analytics
+                </a>
+              </li>
+              <li className="nav-item">
+                <a 
                   className={`nav-link ${activeTab === 'employees' ? 'active' : ''}`}
                   href="#employees"
                   onClick={() => setActiveTab('employees')}
@@ -41,7 +51,11 @@ function App() {
                 >
                   <i className="fas fa-calendar-check"></i> Attendance
                 </a>
-              </li>
+              </li>analytics' && (
+            <Analytics />
+          )}
+
+          {activeTab === '
             </ul>
           </div>
         </div>
