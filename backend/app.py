@@ -127,6 +127,69 @@ def create_app():
                 'error': str(e)
             }), 500
     
+    @app.route('/api/employees/<int:emp_id>', methods=['PUT'])
+    def update_employee(emp_id):
+        """Update an employee"""
+        try:
+            employee = Employee.query.get(emp_id)
+            if not employee:
+                return jsonify({
+                    'success': False,
+                    'message': 'Employee not found'
+                }), 404
+            
+            data = request.get_json()
+            
+            if not data:
+                return jsonify({
+                    'success': False,
+                    'message': 'No data provided'
+                }), 400
+            
+            # Validate data for updates (allow partial updates)
+            errors = Employee.validate(data, is_update=True)
+            if errors:
+                return jsonify({
+                    'success': False,
+                    'message': 'Validation failed',
+                    'errors': errors
+                }), 400
+            
+            # Check if email is being updated and already exists (excluding current employee)
+            if 'email' in data and data.get('email') != employee.email:
+                existing_email = Employee.query.filter_by(email=data.get('email')).first()
+                if existing_email:
+                    return jsonify({
+                        'success': False,
+                        'message': 'Validation failed',
+                        'errors': ['Email already exists']
+                    }), 400
+            
+            # Update fields
+            if 'full_name' in data:
+                employee.full_name = data.get('full_name').strip()
+            if 'email' in data:
+                employee.email = data.get('email').strip()
+            if 'department' in data:
+                employee.department = data.get('department').strip()
+            
+            employee.updated_at = datetime.utcnow()
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Employee updated successfully',
+                'data': employee.to_dict()
+            }), 200
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                'success': False,
+                'message': 'Error updating employee',
+                'error': str(e)
+            }), 500
+    
     @app.route('/api/employees/<int:emp_id>', methods=['DELETE'])
     def delete_employee(emp_id):
         """Delete an employee"""
@@ -451,6 +514,97 @@ def create_app():
             return jsonify({
                 'success': False,
                 'message': 'Error retrieving employee analytics',
+                'error': str(e)
+            }), 500
+    
+    @app.route('/api/analytics/department/<string:department>', methods=['GET'])
+    def get_department_analytics(department):
+        """Get attendance analytics for a specific department"""
+        try:
+            # Get all employees in the department
+            employees = Employee.query.filter_by(department=department).all()
+            
+            if not employees:
+                return jsonify({
+                    'success': False,
+                    'message': 'Department not found'
+                }), 404
+            
+            employee_ids = [emp.id for emp in employees]
+            
+            # Get all attendance records for employees in this department
+            records = Attendance.query.filter(Attendance.employee_id.in_(employee_ids)).all()
+            
+            total = len(records)
+            present = sum(1 for r in records if r.status == 'Present')
+            absent = sum(1 for r in records if r.status == 'Absent')
+            
+            attendance_rate = (present / total * 100) if total > 0 else 0
+            
+            # Per-employee breakdown
+            employee_breakdown = []
+            for emp in employees:
+                emp_records = [r for r in records if r.employee_id == emp.id]
+                emp_total = len(emp_records)
+                emp_present = sum(1 for r in emp_records if r.status == 'Present')
+                emp_absent = sum(1 for r in emp_records if r.status == 'Absent')
+                emp_rate = (emp_present / emp_total * 100) if emp_total > 0 else 0
+                
+                employee_breakdown.append({
+                    'employee': emp.to_dict(),
+                    'total_records': emp_total,
+                    'present_count': emp_present,
+                    'absent_count': emp_absent,
+                    'attendance_rate': round(emp_rate, 2)
+                })
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'department': department,
+                    'total_employees': len(employees),
+                    'total_records': total,
+                    'present_count': present,
+                    'absent_count': absent,
+                    'attendance_rate': round(attendance_rate, 2),
+                    'employees': employee_breakdown
+                }
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error retrieving department analytics',
+                'error': str(e)
+            }), 500
+    
+    @app.route('/api/departments', methods=['GET'])
+    def get_departments():
+        """Get all unique departments"""
+        try:
+            departments_data = db.session.query(
+                Employee.department,
+                db.func.count(Employee.id).label('count')
+            ).group_by(Employee.department).order_by(Employee.department).all()
+            
+            departments = [
+                {
+                    'name': dept,
+                    'count': count
+                }
+                for dept, count in departments_data
+            ]
+            
+            return jsonify({
+                'success': True,
+                'data': departments,
+                'count': len(departments)
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error retrieving departments',
                 'error': str(e)
             }), 500
     

@@ -32,10 +32,38 @@ class Employee(db.Model):
         }
     
     @staticmethod
-    def validate(data):
+    def validate(data, is_update=False):
         """Validate employee data"""
         errors = []
         
+        # For updates, only validate fields that are provided
+        if is_update:
+            # Only validate fields that are present in the data
+            if 'full_name' in data:
+                if not data.get('full_name'):
+                    errors.append('Full name cannot be empty')
+                elif not isinstance(data.get('full_name'), str):
+                    errors.append('Full name must be a string')
+                elif len(data.get('full_name', '').strip()) == 0:
+                    errors.append('Full name cannot be empty')
+                
+            if 'email' in data:
+                if not data.get('email'):
+                    errors.append('Email address is required')
+                elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data.get('email', '')):
+                    errors.append('Invalid email format')
+                
+            if 'department' in data:
+                if not data.get('department'):
+                    errors.append('Department cannot be empty')
+                elif not isinstance(data.get('department'), str):
+                    errors.append('Department must be a string')
+                elif len(data.get('department', '').strip()) == 0:
+                    errors.append('Department cannot be empty')
+            
+            return errors
+        
+        # For creation, all fields are required
         if not data.get('employee_id'):
             errors.append('Employee ID is required')
         elif not isinstance(data.get('employee_id'), str):

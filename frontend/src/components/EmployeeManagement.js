@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AddEmployee from './AddEmployee';
+import EditEmployee from './EditEmployee';
 import EmployeeList from './EmployeeList';
 import axios from 'axios';
 
@@ -10,6 +11,8 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
   // Fetch employees on component mount and when refreshTrigger changes
@@ -52,6 +55,30 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       const errorMsg = err.response?.data?.errors?.[0] || err.response?.data?.message || 'Error adding employee';
       setError(errorMsg);
       console.error('Error adding employee:', err);
+    }
+  };
+
+  const handleEditEmployee = (employee) => {
+    setEditingEmployee(employee);
+    setShowEditForm(true);
+    setShowAddForm(false);
+  };
+
+  const handleUpdateEmployee = async (updatedEmployee) => {
+    try {
+      setSuccessMessage('Employee updated successfully!');
+      setShowEditForm(false);
+      setEditingEmployee(null);
+      // Update the employees list with the updated employee
+      const updatedEmployees = employees.map(emp =>
+        emp.id === updatedEmployee.id ? updatedEmployee : emp
+      );
+      setEmployees(updatedEmployees);
+      onDataChange();
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      setError('Error updating employee');
+      console.error('Error updating employee:', err);
     }
   };
 
@@ -107,8 +134,21 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
         </div>
       )}
 
+      {/* Edit Employee Form */}
+      {showEditForm && editingEmployee && (
+        <EditEmployee 
+          employee={editingEmployee}
+          onSubmit={handleUpdateEmployee}
+          onCancel={() => {
+            setShowEditForm(false);
+            setEditingEmployee(null);
+          }}
+          onError={setError}
+        />
+      )}
+
       {/* Add Employee Form */}
-      {showAddForm && (
+      {showAddForm && !showEditForm && (
         <AddEmployee 
           onSubmit={handleAddEmployee}
           onCancel={() => setShowAddForm(false)}
@@ -117,7 +157,7 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       )}
 
       {/* Add Employee Button */}
-      {!showAddForm && (
+      {!showAddForm && !showEditForm && (
         <div className="mb-4">
           <button 
             className="btn btn-success btn-lg"
@@ -133,6 +173,7 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
         employees={employees}
         loading={loading}
         onDelete={handleDeleteEmployee}
+        onEdit={handleEditEmployee}
       />
     </div>
   );

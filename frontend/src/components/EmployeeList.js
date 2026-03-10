@@ -1,6 +1,6 @@
 import React from 'react';
 
-function EmployeeList({ employees, loading, onDelete }) {
+function EmployeeList({ employees, loading, onDelete, onEdit }) {
   if (loading) {
     return (
       <div className="card">
@@ -68,13 +68,22 @@ function EmployeeList({ employees, loading, onDelete }) {
                     </span>
                   </td>
                   <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => onDelete(employee.id)}
-                      title="Delete Employee"
-                    >
-                      <i className="fas fa-trash-alt me-1"></i>Delete
-                    </button>
+                    <div className="btn-group btn-group-sm" role="group">
+                      <button
+                        className="btn btn-info"
+                        onClick={() => onEdit(employee)}
+                        title="Edit Employee"
+                      >
+                        <i className="fas fa-edit me-1"></i>Edit
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => onDelete(employee.id)}
+                        title="Delete Employee"
+                      >
+                        <i className="fas fa-trash-alt me-1"></i>Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
