@@ -17,15 +17,6 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
     fetchEmployees();
   }, [refreshTrigger]);
 
-  // Auto-refresh employee data every 30 seconds to ensure database sync
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchEmployees();
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   const fetchEmployees = async () => {
     setLoading(true);
     setError(null);
