@@ -122,12 +122,46 @@ body {
 
 /* ==================== Tables ==================== */
 
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+/* Custom scrollbar for Chrome, Edge, and Safari */
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
 .table {
   margin-bottom: 0;
+  min-width: 100%;
+  width: 100%;
 }
 
 .table thead {
   background: var(--light-bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table thead th {
@@ -136,12 +170,14 @@ body {
   font-weight: 600;
   padding: 1rem;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .table tbody td {
   padding: 1rem;
   vertical-align: middle;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .table tbody tr {
@@ -378,6 +414,13 @@ body {
     padding: 1.5rem;
   }
 
+  /* Table responsive improvements for tablet */
+  .table-responsive {
+    border-radius: 8px;
+    margin: -1.5rem -1.5rem 0 -1.5rem;
+    padding: 1.5rem;
+  }
+
   .table {
     font-size: 0.875rem;
   }
@@ -385,6 +428,22 @@ body {
   .table thead th,
   .table tbody td {
     padding: 0.75rem 0.5rem;
+  }
+
+  /* Button group wrapping for tablets */
+  .btn-group.btn-group-sm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    width: 100%;
+    min-width: 120px;
+  }
+
+  .btn-group.btn-group-sm .btn {
+    flex: 1 1 calc(50% - 0.125rem);
+    min-width: 60px;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
   }
 
   .btn {
@@ -403,17 +462,96 @@ body {
   }
 
   .btn {
-    width: 100%;
     margin-bottom: 0.5rem;
+  }
+
+  /* Full horizontal scroll for small mobile devices */
+  .table-responsive {
+    border-radius: 8px;
+    margin: -1.5rem -1.5rem 0 -1.5rem;
+    padding: 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .table {
     font-size: 0.75rem;
+    min-width: 600px;
   }
 
   .table thead th,
   .table tbody td {
-    padding: 0.5rem 0.25rem;
+    padding: 0.5rem 0.4rem;
+    white-space: nowrap;
+  }
+
+  /* Action buttons in scrollable table */
+  .table tbody td:last-child {
+    padding: 0.5rem 0.4rem;
+    min-width: 120px;
+  }
+
+  /* Stack action buttons vertically on mobile */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+    min-width: 110px;
+  }
+
+  .btn-group .btn {
+    width: 100%;
+    border-radius: 6px;
+    padding: 0.4rem 0.3rem;
+    font-size: 0.7rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Remove border-radius conflicts in btn-group on mobile */
+  .btn-group .btn:first-child {
+    border-radius: 6px;
+  }
+
+  .btn-group .btn:last-child {
+    border-radius: 6px;
+  }
+
+  /* Icon sizing in buttons on mobile */
+  .btn-group .btn i {
+    margin-right: 0.2rem;
+  }
+}
+
+/* Extra small devices (landscape phones) */
+@media (max-width: 480px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .table {
+    font-size: 0.7rem;
+    min-width: 550px;
+  }
+
+  .table thead th {
+    padding: 0.4rem 0.3rem;
+  }
+
+  .table tbody td {
+    padding: 0.4rem 0.3rem;
+  }
+
+  .btn-group .btn {
+    padding: 0.35rem 0.25rem;
+    font-size: 0.65rem;
+  }
+
+  .btn-group .btn i {
+    font-size: 0.7rem;
   }
 }
 
@@ -576,7 +714,12 @@ body {
 /* Table Enhancements */
 .table-responsive {
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
 }
 
 .table thead th {
@@ -585,10 +728,17 @@ body {
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Actions column specific styles */
+.table td:last-child {
+  white-space: nowrap;
+  min-width: auto;
 }
 
 /* Responsive Analytics */
@@ -638,5 +788,57 @@ body {
 
   .department-card {
     padding: 1rem;
+  }
+}
+
+/* ==================== Mobile Scroll Enhancements ==================== */
+
+/* Add visual gradient hint for scrollable table on mobile */
+@media (max-width: 576px) {
+  .table-responsive::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out 0.5s infinite;
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  /* Enhanced scrollbar visibility on mobile */
+  .table-responsive {
+    position: relative;
+  }
+}
+
+/* Touch-friendly improvements for all mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets for buttons */
+  .btn-group .btn {
+    min-height: 44px;
+    padding: 0.5rem 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Better spacing for touch interactions */
+  .table tbody td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Enable momentum scrolling on iOS */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
   }
 }
