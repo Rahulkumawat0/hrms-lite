@@ -25,14 +25,57 @@ def create_app():
     
     @app.route('/api/employees', methods=['GET'])
     def get_employees():
-        """Get all employees"""
+        """Get all employees with pagination support
+        
+        Query Parameters:
+        - page: Page number (default: 1)
+        - per_page: Records per page (default: 50, max: 200)
+        - department: Filter by department (optional)
+        """
         try:
-            employees = Employee.query.all()
-            return jsonify({
+            # Get pagination parameters
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 50, type=int)
+            department = request.args.get('department', None, type=str)
+            
+            # Validate page and per_page
+            page = max(1, page)
+            per_page = min(200, max(1, per_page))  # Max 200 per page
+            
+            # Build query
+            query = Employee.query
+            
+            # Apply department filter if provided
+            if department:
+                query = query.filter_by(department=department)
+            
+            # Get total count for pagination info
+            total_count = query.count()
+            
+            # Execute paginated query
+            employees = query.order_by(Employee.id).offset((page - 1) * per_page).limit(per_page).all()
+            
+            # Calculate pagination info
+            total_pages = (total_count + per_page - 1) // per_page
+            
+            # Add caching headers for GET requests
+            response = jsonify({
                 'success': True,
                 'data': [emp.to_dict() for emp in employees],
-                'count': len(employees)
-            }), 200
+                'count': len(employees),
+                'total_count': total_count,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages,
+                'has_next': page < total_pages,
+                'has_prev': page > 1
+            })
+            
+            # Set cache control headers (5 minutes for employee list)
+            response.headers['Cache-Control'] = 'public, max-age=300'
+            
+            return response, 200
+            
         except Exception as e:
             return jsonify({
                 'success': False,
@@ -221,9 +264,21 @@ def create_app():
     
     @app.route('/api/attendance', methods=['GET'])
     def get_attendance():
-        """Get attendance records (optional: filter by employee_id)"""
+        """Get attendance records with pagination (optional: filter by employee_id)
+        
+        Query Parameters:
+        - employee_id: Filter by employee ID (optional)
+        - page: Page number (default: 1)
+        - per_page: Records per page (default: 100, max: 500)
+        """
         try:
             employee_id = request.args.get('employee_id', type=int)
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 100, type=int)
+            
+            # Validate pagination
+            page = max(1, page)
+            per_page = min(500, max(1, per_page))  # Max 500 per page
             
             if employee_id:
                 # Get attendance for a specific employee
@@ -234,16 +289,36 @@ def create_app():
                         'message': 'Employee not found'
                     }), 404
                 
-                records = Attendance.query.filter_by(employee_id=employee_id).order_by(Attendance.date.desc()).all()
+                query = Attendance.query.filter_by(employee_id=employee_id)
             else:
-                # Get all attendance records sorted by date (newest first)
-                records = Attendance.query.order_by(Attendance.date.desc()).all()
+                # Get all attendance records
+                query = Attendance.query
             
-            return jsonify({
+            # Get total count
+            total_count = query.count()
+            
+            # Execute paginated query with sorting
+            records = query.order_by(Attendance.date.desc()).offset((page - 1) * per_page).limit(per_page).all()
+            
+            # Calculate pagination info
+            total_pages = (total_count + per_page - 1) // per_page
+            
+            response = jsonify({
                 'success': True,
                 'data': [record.to_dict() for record in records],
-                'count': len(records)
-            }), 200
+                'count': len(records),
+                'total_count': total_count,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages,
+                'has_next': page < total_pages,
+                'has_prev': page > 1
+            })
+            
+            # Set cache control headers
+            response.headers['Cache-Control'] = 'public, max-age=300'
+            
+            return response, 200
             
         except Exception as e:
             return jsonify({

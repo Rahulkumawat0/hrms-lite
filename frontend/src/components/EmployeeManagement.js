@@ -14,19 +14,33 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(50);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   // Fetch employees on component mount and when refreshTrigger changes
   useEffect(() => {
-    fetchEmployees();
+    fetchEmployees(currentPage);
   }, [refreshTrigger]);
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = async (page = 1) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/employees`);
+      const response = await axios.get(`${API_BASE_URL}/employees`, {
+        params: {
+          page: page,
+          per_page: perPage
+        }
+      });
       if (response.data.success) {
         setEmployees(response.data.data);
+        setTotalEmployees(response.data.total_count);
+        setTotalPages(response.data.total_pages);
+        setCurrentPage(page);
       } else {
         setError('Failed to fetch employees');
       }
@@ -44,8 +58,8 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       if (response.data.success) {
         setSuccessMessage('Employee added successfully!');
         setShowAddForm(false);
-        // Immediately fetch fresh data from database
-        await fetchEmployees();
+        // Fetch first page to get updated list (more efficient than loading all)
+        await fetchEmployees(1);
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
@@ -91,8 +105,9 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
       const response = await axios.delete(`${API_BASE_URL}/employees/${employeeId}`);
       if (response.data.success) {
         setSuccessMessage('Employee deleted successfully!');
-        // Immediately fetch fresh data from database
-        await fetchEmployees();
+        // Reload current page, or go to previous page if last item on page was deleted
+        const pageToLoad = employees.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+        await fetchEmployees(pageToLoad);
         onDataChange();
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
@@ -165,6 +180,84 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
           >
             <i className="fas fa-plus me-2"></i>Add New Employee
           </button>
+        </div>
+      )}
+
+      {/* Pagination and Filter Controls */}
+      {!showAddForm && !showEditForm && employees.length > 0 && (
+        <div className="card mb-4">
+          <div className="card-body">
+            <div className="row align-items-center">
+              <div className="col-md-6">
+                <div className="d-flex gap-2 align-items-center">
+                  <label className="form-label mb-0">Show per page:</label>
+                  <select 
+                    className="form-select form-select-sm" 
+                    style={{width: 'auto'}}
+                    value={perPage}
+                    onChange={(e) => {
+                      setPerPage(parseInt(e.target.value));
+                      setCurrentPage(1);
+                      fetchEmployees(1);
+                    }}
+                  >
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span className="text-muted small">
+                    Showing {((currentPage - 1) * perPage) + 1} to {Math.min(currentPage * perPage, totalEmployees)} of {totalEmployees}
+                  </span>
+                </div>
+              </div>
+              <div className="col-md-6 text-end">
+                <nav aria-label="Page navigation">
+                  <ul className="pagination justify-content-end mb-0">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link" 
+                        onClick={() => fetchEmployees(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
+                    </li>
+                    {Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      return (
+                        <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                          <button 
+                            className="page-link" 
+                            onClick={() => fetchEmployees(pageNum)}
+                          >
+                            {pageNum}
+                          </button>
+                        </li>
+                      );
+                    })}
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link" 
+                        onClick={() => fetchEmployees(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
