@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AddEmployee from './AddEmployee';
 import EditEmployee from './EditEmployee';
 import EmployeeList from './EmployeeList';
@@ -21,12 +21,8 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Fetch employees on component mount and when refreshTrigger changes
-  useEffect(() => {
-    fetchEmployees(currentPage);
-  }, [refreshTrigger]);
-
-  const fetchEmployees = async (page = 1) => {
+  // Memoize fetchEmployees to avoid infinite loops
+  const fetchEmployees = useCallback(async (page = 1) => {
     setLoading(true);
     setError(null);
     try {
@@ -50,7 +46,12 @@ function EmployeeManagement({ onDataChange, refreshTrigger }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [perPage]);
+
+  // Fetch employees on component mount and when refreshTrigger changes
+  useEffect(() => {
+    fetchEmployees(1);
+  }, [refreshTrigger, fetchEmployees]);
 
   const handleAddEmployee = async (formData) => {
     try {
